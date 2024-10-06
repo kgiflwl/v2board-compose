@@ -1,0 +1,44 @@
+#/*
+# * This file is part of kgiflwl/v2board-compose.
+# *
+# * kgiflwl/v2board-compose is free software: you can redistribute it and/or modify
+# * it under the terms of the GNU General Public License as published by
+# * the Free Software Foundation, either version 3 of the License, or
+# * (at your option) any later version.
+# *
+# * kgiflwl/v2board-compose is distributed in the hope that it will be useful,
+# * but WITHOUT ANY WARRANTY; without even the implied warranty of
+# * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# * GNU General Public License for more details.
+# *
+# * You should have received a copy of the GNU General Public License
+# * along with kgiflwl/v2board-compose. If not, see <https://www.gnu.org/licenses/>.
+# */
+
+services:
+  www:
+    image: kgiflwl/lcrp:latest
+    container_name: www
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - mariadb
+    volumes:
+      - ./v2board:/www
+      - ./data/wwwlogs:/wwwlogs
+      - ./data/.caddy:/root/.caddy
+      - ./config/Caddyfile:/run/caddy/Caddyfile
+      - ./config/supervisord.conf:/run/supervisor/supervisord.conf
+      - ./config/crontabs.conf:/etc/crontabs/root
+
+  mariadb:
+    image: mariadb:lts-noble
+    container_name: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-your_db_root_password}
+    volumes:
+      - ./data/mariadb:/var/lib/mysql
+      - ./config/docker-entrypoint-initdb.d/init.sql:/docker-entrypoint-initdb.d/init.sql
