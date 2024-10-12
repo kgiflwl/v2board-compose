@@ -49,7 +49,7 @@ data-backup:
 
 .PHONY: v2board-install
 v2board-install: data-backup database
-	git clone -b $(V2BOARD_VERSION) --depth 1 git@github.com:v2board/v2board.git
+	git clone -b $(V2BOARD_VERSION) --depth 1 https://github.com/v2board/v2board.git
 	$(COMPOSE_CMD) up -d
 	@docker exec -ti www sh init.sh
 	@$(COMPOSE_CMD) restart www
